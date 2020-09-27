@@ -17,7 +17,7 @@ $max_servers = %max_servers; # num of pre-forked children (2..30 is common), -m
 $daemon_user  = 'amavis';    # (no default;  customary: vscan or amavis), -u
 $daemon_group = 'amavis';    # (no default;  customary: vscan or amavis), -g
 
-$mydomain = '%hostname';   # a convenient default for other settings
+$mydomain = '%hostname_smtp';   # a convenient default for other settings
 
 $MYHOME = '/var/spool/amavisd';   # a convenient default for other settings, -H
 $TEMPBASE = "$MYHOME/tmp";   # working directory, needs to exist, -T

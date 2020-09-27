@@ -14,7 +14,7 @@ An installer which deploy a complete mail server based on Modoboa.
    * CentOS 7
 
 .. warning::
-      
+
    ``/tmp`` partition must be mounted without the ``noexec`` option.
 
 .. note::
@@ -99,10 +99,11 @@ value, generate the configuration file like this::
 Then edit ``installer.cfg`` and look for the following section::
 
   [general]
-  hostname = mail.%(domain)s
+  hostname_smtp = mail.%(domain)s
+  hostname_imap = mail.%(domain)s
 
 Replace ``mail`` by the value you want to use and save your
-modifications.
+modifications. You can set different hostname for SMTP and IMAP services.
 
 Finally, run the installer without the
 ``--stop-after-configfile-check`` option.

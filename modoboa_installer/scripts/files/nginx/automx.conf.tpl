@@ -5,11 +5,11 @@ upstream automx {
 server {
     listen 80;
     listen [::]:80;
-    server_name %hostname;
+    server_name autoconfig.%{domain};
     root /srv/automx/instance;
 
-    access_log /var/log/nginx/%{hostname}-access.log;
-    error_log /var/log/nginx/%{hostname}-error.log;
+    access_log /var/log/nginx/autoconfig.%{domain}-access.log;
+    error_log /var/log/nginx/autoconfig.%{domain}-error.log;
 
     location /mail/config-v1.1.xml {
         include uwsgi_params;

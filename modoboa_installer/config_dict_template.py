@@ -22,9 +22,13 @@ ConfigDictTemplate = [
         "name": "general",
         "values": [
             {
-                "option": "hostname",
+                "option": "hostname_smtp",
                 "default": "mail.%(domain)s",
-            }
+            },
+            {
+                "option": "hostname_imap",
+                "default": "mail.%(domain)s",
+            },
         ],
     },
     {

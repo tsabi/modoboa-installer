@@ -21,9 +21,11 @@ class Dovecot(base.Installer):
     packages = {
         "deb": [
             "dovecot-imapd",
+            "dovecot-pop3d",
             "dovecot-lmtpd",
             "dovecot-managesieved",
             "dovecot-sieve",
+            "dovecot-submissiond",
         ],
         "rpm": ["dovecot", "dovecot-pigeonhole"],
     }

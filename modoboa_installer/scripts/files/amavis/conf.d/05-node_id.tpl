@@ -8,6 +8,6 @@ use strict;
 # To manually set $myhostname, edit the following line with the correct Fully
 # Qualified Domain Name (FQDN) and remove the # at the beginning of the line.
 #
-$myhostname = "%hostname";
+$myhostname = "%hostname_smtp";
 
 1;  # ensure a defined return

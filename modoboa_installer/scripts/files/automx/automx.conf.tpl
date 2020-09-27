@@ -17,7 +17,7 @@ query = %sql_query
 result_attrs = display_name, email
 
 smtp = yes
-smtp_server = %hostname
+smtp_server = %hostname_smtp
 smtp_port = 587
 smtp_encryption = starttls
 smtp_auth = plaintext
@@ -26,7 +26,7 @@ smtp_refresh_ttl = 6
 smtp_default = yes
 
 imap = yes
-imap_server = %hostname
+imap_server = %hostname_imap
 imap_port = 143
 imap_encryption = starttls
 imap_auth = plaintext
@@ -34,7 +34,7 @@ imap_auth_identity = ${email}
 imap_refresh_ttl = 6
 
 pop = yes
-pop_server = %hostname
+pop_server = %hostname_imap
 pop_port = 110
 pop_encryption = starttls
 pop_auth = plaintext

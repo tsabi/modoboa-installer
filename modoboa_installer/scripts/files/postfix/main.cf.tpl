@@ -1,6 +1,6 @@
 inet_interfaces = all
 inet_protocols = ipv4
-myhostname = %hostname
+myhostname = %hostname_smtp
 myorigin = $myhostname
 mydestination = $myhostname
 mynetworks = 127.0.0.0/8
@@ -39,8 +39,8 @@ proxy_read_maps =
 smtpd_use_tls = yes
 smtpd_tls_auth_only = no
 smtpd_tls_CApath = /etc/ssl/certs
-smtpd_tls_key_file = %tls_key_file
-smtpd_tls_cert_file = %tls_cert_file
+smtpd_tls_key_file = %tls_key_file_smtp
+smtpd_tls_cert_file = %tls_cert_file_smtp
 smtpd_tls_dh1024_param_file = ${config_directory}/dh2048.pem
 smtpd_tls_loglevel = 1
 smtpd_tls_session_cache_database = btree:$data_directory/smtpd_tls_session_cache
@@ -77,7 +77,7 @@ virtual_alias_maps =
 relay_domains =
         proxy:%{db_driver}:/etc/postfix/sql-relaydomains.cf
 transport_maps =
-	proxy:%{db_driver}:/etc/postfix/sql-transport.cf
+    proxy:%{db_driver}:/etc/postfix/sql-transport.cf
         proxy:%{db_driver}:/etc/postfix/sql-spliteddomains-transport.cf
 
 ## SASL authentication through Dovecot
@@ -138,18 +138,18 @@ smtpd_recipient_restrictions =
 postscreen_access_list =
        permit_mynetworks
        cidr:/etc/postfix/postscreen_spf_whitelist.cidr
-postscreen_blacklist_action = enforce 
+postscreen_blacklist_action = enforce
 
 # Use some DNSBL
-postscreen_dnsbl_sites = 
-	zen.spamhaus.org*3
-	bl.spameatingmonkey.net*2
-	bl.spamcop.net
-	dnsbl.sorbs.net
-postscreen_dnsbl_threshold = 3 
-postscreen_dnsbl_action = enforce 
+postscreen_dnsbl_sites =
+    zen.spamhaus.org*3
+    bl.spameatingmonkey.net*2
+    bl.spamcop.net
+    dnsbl.sorbs.net
+postscreen_dnsbl_threshold = 3
+postscreen_dnsbl_action = enforce
 
-postscreen_greet_banner = Welcome, please wait... 
+postscreen_greet_banner = Welcome, please wait...
 postscreen_greet_action = enforce
 
 postscreen_pipelining_enable = yes

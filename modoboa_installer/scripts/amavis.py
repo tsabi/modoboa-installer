@@ -97,7 +97,7 @@ class Amavis(base.Installer):
     def pre_run(self):
         """Tasks to run first."""
         with open("/etc/mailname", "w") as fp:
-            fp.write("{}\n".format(self.config.get("general", "hostname")))
+            fp.write("{}\n".format(self.config.get("general", "hostname_smtp")))
 
     def post_run(self):
         """Additional tasks."""

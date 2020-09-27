@@ -21,17 +21,36 @@ from modoboa_installer import utils
 
 def installation_disclaimer(args, config):
     """Display installation disclaimer."""
-    hostname = config.get("general", "hostname")
-    utils.printcolor(
-        "Warning:\n"
-        "Before you start the installation, please make sure the following "
-        "DNS records exist for domain '{}':\n"
-        "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
-        "       IN MX  {}.\n".format(
-            args.domain, hostname.replace(".{}".format(args.domain), ""), hostname
-        ),
-        utils.CYAN,
-    )
+    hostname_smtp = config.get("general", "hostname_smtp")
+    hostname_imap = config.get("general", "hostname_imap")
+    if hostname_smtp == hostname_imap:
+        utils.printcolor(
+            "Warning:\n"
+            "Before you start the installation, please make sure the following "
+            "DNS records exist for domain '{}':\n"
+            "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
+            "       IN MX  {}.\n".format(
+                args.domain,
+                hostname_smtp.replace(".{}".format(args.domain), ""),
+                hostname_smtp,
+            ),
+            utils.CYAN,
+        )
+    else:
+        utils.printcolor(
+            "Warning:\n"
+            "Before you start the installation, please make sure the following "
+            "DNS records exist for domain '{}':\n"
+            "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
+            "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
+            "       IN MX  {}.\n".format(
+                args.domain,
+                hostname_smtp.replace(".{}".format(args.domain), ""),
+                hostname_imap.replace(".{}".format(args.domain), ""),
+                hostname_smtp,
+            ),
+            utils.CYAN,
+        )
     utils.printcolor(
         "Your mail server will be installed with the following components:", utils.BLUE
     )
@@ -151,7 +170,7 @@ def main(input_args):
     system.restart_service("cron")
     utils.printcolor(
         "Congratulations! You can enjoy Modoboa at https://{} (admin:password)".format(
-            config.get("general", "hostname")
+            config.get("general", "hostname_smtp")
         ),
         utils.GREEN,
     )

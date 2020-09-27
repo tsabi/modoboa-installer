@@ -161,7 +161,7 @@ class Modoboa(base.Installer):
             "--timezone",
             self.config.get("modoboa", "timezone"),
             "--domain",
-            self.config.get("general", "hostname"),
+            self.config.get("general", "hostname_smtp"),
             "--extensions",
             " ".join(self.extensions),
             "--dont-install-extensions",
@@ -264,7 +264,7 @@ class Modoboa(base.Installer):
             "modoboa_pdfcredentials": {"storage_dir": pdf_storage_dir},
             "modoboa_radicale": {
                 "server_location": "https://{}/radicale/".format(
-                    self.config.get("general", "hostname")
+                    self.config.get("general", "hostname_imap")
                 ),
                 "rights_file_path": "{}/rights".format(
                     self.config.get("radicale", "config_dir")
