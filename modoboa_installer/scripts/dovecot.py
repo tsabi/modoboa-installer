@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Dovecot related tools."""
 
 import glob
@@ -19,25 +20,30 @@ class Dovecot(base.Installer):
     appname = "dovecot"
     packages = {
         "deb": [
-            "dovecot-imapd", "dovecot-lmtpd", "dovecot-managesieved",
-            "dovecot-sieve"],
-        "rpm": [
-            "dovecot", "dovecot-pigeonhole"]
+            "dovecot-imapd",
+            "dovecot-lmtpd",
+            "dovecot-managesieved",
+            "dovecot-sieve",
+        ],
+        "rpm": ["dovecot", "dovecot-pigeonhole"],
     }
     config_files = [
-        "dovecot.conf", "dovecot-dict-sql.conf.ext", "conf.d/10-ssl.conf",
-        "conf.d/10-master.conf", "conf.d/20-lmtp.conf"]
+        "dovecot.conf",
+        "dovecot-dict-sql.conf.ext",
+        "conf.d/10-ssl.conf",
+        "conf.d/10-master.conf",
+        "conf.d/20-lmtp.conf",
+    ]
     with_user = True
 
     def get_config_files(self):
         """Additional config files."""
         return self.config_files + [
-            "dovecot-sql-{}.conf.ext=dovecot-sql.conf.ext"
-            .format(self.dbengine),
-            "dovecot-sql-master-{}.conf.ext=dovecot-sql-master.conf.ext"
-            .format(self.dbengine),
-            "postlogin-{}.sh=/usr/local/bin/postlogin.sh"
-            .format(self.dbengine),
+            "dovecot-sql-{}.conf.ext=dovecot-sql.conf.ext".format(self.dbengine),
+            "dovecot-sql-master-{}.conf.ext=dovecot-sql-master.conf.ext".format(
+                self.dbengine
+            ),
+            "postlogin-{}.sh=/usr/local/bin/postlogin.sh".format(self.dbengine),
         ]
 
     def get_packages(self):
@@ -51,7 +57,8 @@ class Dovecot(base.Installer):
     def install_packages(self):
         """Preconfigure Dovecot if needed."""
         package.backend.preconfigure(
-            "dovecot-core", "create-ssl-cert", "boolean", "false")
+            "dovecot-core", "create-ssl-cert", "boolean", "false"
+        )
         super(Dovecot, self).install_packages()
 
     def get_template_context(self):
@@ -69,20 +76,23 @@ class Dovecot(base.Installer):
         else:
             # Protocols are automatically guessed on debian/ubuntu
             protocols = ""
-        context.update({
-            "db_driver": self.db_driver,
-            "mailboxes_owner_uid": pw[2],
-            "mailboxes_owner_gid": pw[3],
-            "modoboa_user": self.config.get("modoboa", "user"),
-            "modoboa_dbname": self.config.get("modoboa", "dbname"),
-            "modoboa_dbuser": self.config.get("modoboa", "dbuser"),
-            "modoboa_dbpassword": self.config.get("modoboa", "dbpassword"),
-            "protocols": protocols,
-            "ssl_protocols": ssl_protocols,
-            "radicale_user": self.config.get("radicale", "user"),
-            "radicale_auth_socket_path": os.path.basename(
-                self.config.get("dovecot", "radicale_auth_socket_path"))
-        })
+        context.update(
+            {
+                "db_driver": self.db_driver,
+                "mailboxes_owner_uid": pw[2],
+                "mailboxes_owner_gid": pw[3],
+                "modoboa_user": self.config.get("modoboa", "user"),
+                "modoboa_dbname": self.config.get("modoboa", "dbname"),
+                "modoboa_dbuser": self.config.get("modoboa", "dbuser"),
+                "modoboa_dbpassword": self.config.get("modoboa", "dbpassword"),
+                "protocols": protocols,
+                "ssl_protocols": ssl_protocols,
+                "radicale_user": self.config.get("radicale", "user"),
+                "radicale_auth_socket_path": os.path.basename(
+                    self.config.get("dovecot", "radicale_auth_socket_path")
+                ),
+            }
+        )
         return context
 
     def post_run(self):
@@ -93,12 +103,16 @@ class Dovecot(base.Installer):
             dbpassword = self.config.get("modoboa", "dbpassword")
             backend = database.get_backend(self.config)
             backend.load_sql_file(
-                dbname, dbuser, dbpassword,
-                self.get_file_path("install_modoboa_postgres_trigger.sql")
+                dbname,
+                dbuser,
+                dbpassword,
+                self.get_file_path("install_modoboa_postgres_trigger.sql"),
             )
             backend.load_sql_file(
-                dbname, dbuser, dbpassword,
-                self.get_file_path("fix_modoboa_postgres_schema.sql")
+                dbname,
+                dbuser,
+                dbpassword,
+                self.get_file_path("fix_modoboa_postgres_schema.sql"),
             )
         for f in glob.glob("{}/*".format(self.get_file_path("conf.d"))):
             utils.copy_file(f, "{}/conf.d".format(self.config_dir))
@@ -117,5 +131,6 @@ class Dovecot(base.Installer):
         action = "start" if code else "restart"
         utils.exec_cmd(
             "service {} {} > /dev/null 2>&1".format(self.appname, action),
-            capture_output=False)
+            capture_output=False,
+        )
         system.enable_service(self.get_daemon_name())

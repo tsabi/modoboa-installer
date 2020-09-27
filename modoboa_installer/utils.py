@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Utility functions."""
 
 import contextlib
@@ -9,6 +10,7 @@ import shutil
 import string
 import subprocess
 import sys
+
 try:
     import configparser
 except ImportError:
@@ -78,14 +80,14 @@ def dist_info():
     try:
         # Python 3.8 and up way
         import distro
+
         return distro.linux_distribution()
     except ImportError:
         # Python 3.7 and down way
         import platform
+
         return platform.linux_distribution()
-    printcolor(
-        "Failed to retrieve information about your system, aborting.",
-        RED)
+    printcolor("Failed to retrieve information about your system, aborting.", RED)
     sys.exit(1)
 
 
@@ -107,8 +109,9 @@ def mkdir(path, mode, uid, gid):
 def make_password(length=16):
     """Create a random password."""
     return "".join(
-        random.SystemRandom().choice(
-            string.ascii_letters + string.digits) for _ in range(length))
+        random.SystemRandom().choice(string.ascii_letters + string.digits)
+        for _ in range(length)
+    )
 
 
 @contextlib.contextmanager
@@ -132,8 +135,7 @@ def backup_file(fname):
     """Create a backup of a given file."""
     for f in glob.glob("{}.old.*".format(fname)):
         os.unlink(f)
-    bak_name = "{}.old.{}".format(
-        fname, datetime.datetime.now().isoformat())
+    bak_name = "{}.old.{}".format(fname, datetime.datetime.now().isoformat())
     shutil.copy(fname, bak_name)
 
 
@@ -154,9 +156,7 @@ def copy_from_template(template, dest, context):
     if os.path.isfile(dest):
         backup_file(dest)
     with open(dest, "w") as fp:
-        fp.write(
-            "# This file was automatically installed on {}\n"
-            .format(now))
+        fp.write("# This file was automatically installed on {}\n".format(now))
         fp.write(ConfigFileTemplate(buf).substitute(context))
 
 
@@ -167,11 +167,13 @@ def check_config_file(dest, interactive=False, upgrade=False):
     if upgrade:
         printcolor(
             "You cannot upgrade an existing installation without a "
-            "configuration file.", RED)
+            "configuration file.",
+            RED,
+        )
         sys.exit(1)
     printcolor(
-        "Configuration file {} not found, creating new one."
-        .format(dest), YELLOW)
+        "Configuration file {} not found, creating new one.".format(dest), YELLOW
+    )
     gen_config(dest, interactive)
 
 
@@ -183,6 +185,7 @@ def has_colours(stream):
         return False  # auto color only on TTYs
     try:
         import curses
+
         curses.setupterm()
         return curses.tigetnum("colors") > 2
     except:
@@ -207,8 +210,9 @@ def convert_version_to_int(version):
     numbers = [int(number_string) for number_string in version.split(".")]
     if len(numbers) > len(number_bits):
         raise NotImplementedError(
-            "Versions with more than {0} decimal places are not supported"
-            .format(len(number_bits) - 1)
+            "Versions with more than {0} decimal places are not supported".format(
+                len(number_bits) - 1
+            )
         )
     # add 0s for missing numbers
     numbers.extend([0] * (len(number_bits) - len(numbers)))
@@ -219,8 +223,9 @@ def convert_version_to_int(version):
         max_num = (bits + 1) - 1
         if num >= 1 << max_num:
             raise ValueError(
-                "Number {0} cannot be stored with only {1} bits. Max is {2}"
-                .format(num, bits, max_num)
+                "Number {0} cannot be stored with only {1} bits. Max is {2}".format(
+                    num, bits, max_num
+                )
             )
         number += num << total_bits
         total_bits += bits
@@ -268,7 +273,7 @@ def get_entry_value(entry, interactive):
         default_value = entry["default"]
     user_value = None
     if entry.get("customizable") and interactive:
-        while (user_value != '' and not validate(user_value, entry)):
+        while user_value != "" and not validate(user_value, entry):
             question = entry.get("question")
             if entry.get("values"):
                 question += " from the list"
@@ -294,7 +299,8 @@ def gen_config(dest, interactive=False):
             config_key, value = section.get("if").split("=")
             section_name, option = config_key.split(".")
             interactive_section = (
-                config.get(section_name, option) == value and interactive)
+                config.get(section_name, option) == value and interactive
+            )
         else:
             interactive_section = interactive
         config.add_section(section["name"])

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Spamassassin related functions."""
 
 import os
@@ -16,10 +17,7 @@ class Spamassassin(base.Installer):
 
     appname = "spamassassin"
     no_daemon = True
-    packages = {
-        "deb": ["spamassassin", "pyzor"],
-        "rpm": ["spamassassin", "pyzor"]
-    }
+    packages = {"deb": ["spamassassin", "pyzor"], "rpm": ["spamassassin", "pyzor"]}
     with_db = True
     config_files = ["v310.pre", "local.cf"]
 
@@ -35,7 +33,8 @@ class Spamassassin(base.Installer):
             version = version.replace(".", "_")
             url = (
                 "http://svn.apache.org/repos/asf/spamassassin/tags/"
-                "spamassassin_release_{}/sql/{}".format(version, fname))
+                "spamassassin_release_{}/sql/{}".format(version, fname)
+            )
             schema = "/tmp/{}".format(fname)
             utils.exec_cmd("wget {} -O {}".format(url, schema))
         return schema
@@ -49,8 +48,7 @@ class Spamassassin(base.Installer):
         else:
             store_module = "Mail::SpamAssassin::BayesStore::MySQL"
             dsn = "DBI:mysql:{}:{}".format(self.dbname, self.dbhost)
-        context.update({
-            "store_module": store_module, "dsn": dsn, "dcc_enabled": "#"})
+        context.update({"store_module": store_module, "dsn": dsn, "dcc_enabled": "#"})
         return context
 
     def post_run(self):
@@ -59,9 +57,11 @@ class Spamassassin(base.Installer):
         pw = pwd.getpwnam(amavis_user)
         utils.exec_cmd(
             "pyzor --homedir {} discover".format(pw[5]),
-            sudo_user=amavis_user, login=False
+            sudo_user=amavis_user,
+            login=False,
         )
         install("razor", self.config, self.upgrade)
         if utils.dist_name() in ["debian", "ubuntu"]:
             utils.exec_cmd(
-                "perl -pi -e 's/^CRON=0/CRON=1/' /etc/cron.daily/spamassassin")
+                "perl -pi -e 's/^CRON=0/CRON=1/' /etc/cron.daily/spamassassin"
+            )

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """An installer for Modoboa."""
 
 import argparse
+
 try:
     import configparser
 except ImportError:
@@ -26,51 +28,64 @@ def installation_disclaimer(args, config):
         "DNS records exist for domain '{}':\n"
         "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
         "       IN MX  {}.\n".format(
-            args.domain,
-            hostname.replace(".{}".format(args.domain), ""),
-            hostname
+            args.domain, hostname.replace(".{}".format(args.domain), ""), hostname
         ),
-        utils.CYAN
+        utils.CYAN,
     )
     utils.printcolor(
-        "Your mail server will be installed with the following components:",
-        utils.BLUE)
+        "Your mail server will be installed with the following components:", utils.BLUE
+    )
 
 
 def upgrade_disclaimer(config):
     """Display upgrade disclaimer."""
     utils.printcolor(
         "Your mail server is about to be upgraded and the following components"
-        " will be impacted:", utils.BLUE
+        " will be impacted:",
+        utils.BLUE,
     )
 
 
 def main(input_args):
     """Install process."""
     parser = argparse.ArgumentParser()
-    versions = (
-        ["latest"] + list(compatibility_matrix.COMPATIBILITY_MATRIX.keys())
+    versions = ["latest"] + list(compatibility_matrix.COMPATIBILITY_MATRIX.keys())
+    parser.add_argument(
+        "--debug", action="store_true", default=False, help="Enable debug output"
     )
-    parser.add_argument("--debug", action="store_true", default=False,
-                        help="Enable debug output")
-    parser.add_argument("--force", action="store_true", default=False,
-                        help="Force installation")
-    parser.add_argument("--configfile", default="installer.cfg",
-                        help="Configuration file to use")
     parser.add_argument(
-        "--version", default="latest", choices=versions,
-        help="Modoboa version to install")
+        "--force", action="store_true", default=False, help="Force installation"
+    )
     parser.add_argument(
-        "--stop-after-configfile-check", action="store_true", default=False,
-        help="Check configuration, generate it if needed and exit")
+        "--configfile", default="installer.cfg", help="Configuration file to use"
+    )
     parser.add_argument(
-        "--interactive", action="store_true", default=False,
-        help="Generate configuration file with user interaction")
+        "--version",
+        default="latest",
+        choices=versions,
+        help="Modoboa version to install",
+    )
     parser.add_argument(
-        "--upgrade", action="store_true", default=False,
-        help="Run the installer in upgrade mode")
-    parser.add_argument("domain", type=str,
-                        help="The main domain of your future mail server")
+        "--stop-after-configfile-check",
+        action="store_true",
+        default=False,
+        help="Check configuration, generate it if needed and exit",
+    )
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        default=False,
+        help="Generate configuration file with user interaction",
+    )
+    parser.add_argument(
+        "--upgrade",
+        action="store_true",
+        default=False,
+        help="Run the installer in upgrade mode",
+    )
+    parser.add_argument(
+        "domain", type=str, help="The main domain of your future mail server"
+    )
     args = parser.parse_args(input_args)
 
     if args.debug:
@@ -95,11 +110,18 @@ def main(input_args):
     # Show concerned components
     components = []
     for section in config.sections():
-        if section in ["general", "database", "mysql", "postgres",
-                       "certificate", "letsencrypt"]:
+        if section in [
+            "general",
+            "database",
+            "mysql",
+            "postgres",
+            "certificate",
+            "letsencrypt",
+        ]:
             continue
-        if (config.has_option(section, "enabled") and
-                not config.getboolean(section, "enabled")):
+        if config.has_option(section, "enabled") and not config.getboolean(
+            section, "enabled"
+        ):
             continue
         components.append(section)
     utils.printcolor(" ".join(components), utils.YELLOW)
@@ -109,8 +131,9 @@ def main(input_args):
             return
     config.set("general", "force", str(args.force))
     utils.printcolor(
-        "The process can be long, feel free to take a coffee "
-        "and come back later ;)", utils.BLUE)
+        "The process can be long, feel free to take a coffee " "and come back later ;)",
+        utils.BLUE,
+    )
     utils.printcolor("Starting...", utils.GREEN)
     package.backend.install_many(["sudo", "wget"])
     ssl_backend = ssl.get_backend(config)
@@ -127,9 +150,11 @@ def main(input_args):
     scripts.install("dovecot", config, args.upgrade)
     system.restart_service("cron")
     utils.printcolor(
-        "Congratulations! You can enjoy Modoboa at https://{} (admin:password)"
-        .format(config.get("general", "hostname")),
-        utils.GREEN)
+        "Congratulations! You can enjoy Modoboa at https://{} (admin:password)".format(
+            config.get("general", "hostname")
+        ),
+        utils.GREEN,
+    )
 
 
 if __name__ == "__main__":

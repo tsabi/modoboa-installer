@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Modoboa compatibility matrix."""
 
 COMPATIBILITY_MATRIX = {
@@ -20,7 +21,7 @@ COMPATIBILITY_MATRIX = {
         "modoboa-pdfcredentials": ">=1.1.1",
         "modoboa-sievefilters": ">=1.1.1",
         "modoboa-webmail": ">=1.2.0",
-    }
+    },
 }
 
 EXTENSIONS_AVAILABILITY = {

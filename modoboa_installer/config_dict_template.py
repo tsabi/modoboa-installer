@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 import string
 
@@ -5,8 +6,9 @@ import string
 def make_password(length=16):
     """Create a random password."""
     return "".join(
-        random.SystemRandom().choice(
-            string.ascii_letters + string.digits) for _ in range(length))
+        random.SystemRandom().choice(string.ascii_letters + string.digits)
+        for _ in range(length)
+    )
 
 
 # Validators should return a tuple bool, error message
@@ -23,7 +25,7 @@ ConfigDictTemplate = [
                 "option": "hostname",
                 "default": "mail.%(domain)s",
             }
-        ]
+        ],
     },
     {
         "name": "certificate",
@@ -38,7 +40,7 @@ ConfigDictTemplate = [
                 "customizable": True,
                 "question": "Please choose your certificate type",
                 "values": ["self-signed", "letsencrypt"],
-            }
+            },
         ],
     },
     {
@@ -49,12 +51,12 @@ ConfigDictTemplate = [
                 "option": "email",
                 "default": "admin@example.com",
                 "question": (
-                    "Please enter the mail you wish to use for "
-                    "letsencrypt"),
+                    "Please enter the mail you wish to use for " "letsencrypt"
+                ),
                 "customizable": True,
-                "validators": [is_email]
+                "validators": [is_email],
             }
-        ]
+        ],
     },
     {
         "name": "database",
@@ -73,8 +75,8 @@ ConfigDictTemplate = [
             {
                 "option": "install",
                 "default": "true",
-            }
-        ]
+            },
+        ],
     },
     {
         "name": "postgres",
@@ -90,7 +92,7 @@ ConfigDictTemplate = [
                 "customizable": True,
                 "question": "Please enter postgres password",
             },
-        ]
+        ],
     },
     {
         "name": "mysql",
@@ -104,7 +106,7 @@ ConfigDictTemplate = [
                 "option": "password",
                 "default": make_password,
                 "customizable": True,
-                "question": "Please enter mysql root password"
+                "question": "Please enter mysql root password",
             },
             {
                 "option": "charset",
@@ -113,8 +115,8 @@ ConfigDictTemplate = [
             {
                 "option": "collation",
                 "default": "utf8_general_ci",
-            }
-        ]
+            },
+        ],
     },
     {
         "name": "modoboa",
@@ -166,7 +168,7 @@ ConfigDictTemplate = [
                 "option": "devmode",
                 "default": "false",
             },
-        ]
+        ],
     },
     {
         "name": "automx",
@@ -195,7 +197,7 @@ ConfigDictTemplate = [
                 "option": "instance_path",
                 "default": "%(home_dir)s/instance",
             },
-        ]
+        ],
     },
     {
         "name": "amavis",
@@ -224,7 +226,7 @@ ConfigDictTemplate = [
                 "option": "dbpassword",
                 "default": make_password,
                 "customizable": True,
-                "question": "Please enter amavis db password"
+                "question": "Please enter amavis db password",
             },
         ],
     },
@@ -239,7 +241,7 @@ ConfigDictTemplate = [
                 "option": "user",
                 "default": "clamav",
             },
-        ]
+        ],
     },
     {
         "name": "dovecot",
@@ -274,9 +276,9 @@ ConfigDictTemplate = [
             },
             {
                 "option": "radicale_auth_socket_path",
-                "default": "/var/run/dovecot/auth-radicale"
+                "default": "/var/run/dovecot/auth-radicale",
             },
-        ]
+        ],
     },
     {
         "name": "nginx",
@@ -302,7 +304,7 @@ ConfigDictTemplate = [
                 "option": "config_dir",
                 "default": "/etc/razor",
             },
-        ]
+        ],
     },
     {
         "name": "postfix",
@@ -319,7 +321,7 @@ ConfigDictTemplate = [
                 "option": "message_size_limit",
                 "default": "11534336",
             },
-        ]
+        ],
     },
     {
         "name": "postwhite",
@@ -332,7 +334,7 @@ ConfigDictTemplate = [
                 "option": "config_dir",
                 "default": "/etc",
             },
-        ]
+        ],
     },
     {
         "name": "spamassassin",
@@ -357,9 +359,9 @@ ConfigDictTemplate = [
                 "option": "dbpassword",
                 "default": make_password,
                 "customizable": True,
-                "question": "Please enter spamassassin db password"
+                "question": "Please enter spamassassin db password",
             },
-        ]
+        ],
     },
     {
         "name": "uwsgi",
@@ -376,7 +378,7 @@ ConfigDictTemplate = [
                 "option": "nb_processes",
                 "default": "2",
             },
-        ]
+        ],
     },
     {
         "name": "radicale",
@@ -400,8 +402,8 @@ ConfigDictTemplate = [
             {
                 "option": "venv_path",
                 "default": "%(home_dir)s/env",
-            }
-        ]
+            },
+        ],
     },
     {
         "name": "opendkim",
@@ -418,14 +420,8 @@ ConfigDictTemplate = [
                 "option": "config_dir",
                 "default": "/etc",
             },
-            {
-                "option": "port",
-                "default": "12345"
-            },
-            {
-                "option": "keys_storage_dir",
-                "default": "/var/lib/dkim"
-            },
+            {"option": "port", "default": "12345"},
+            {"option": "keys_storage_dir", "default": "/var/lib/dkim"},
             {
                 "option": "dbuser",
                 "default": "opendkim",
@@ -434,9 +430,8 @@ ConfigDictTemplate = [
                 "option": "dbpassword",
                 "default": make_password,
                 "customizable": True,
-                "question": "Please enter OpenDKIM db password"
+                "question": "Please enter OpenDKIM db password",
             },
-
-        ]
+        ],
     },
 ]

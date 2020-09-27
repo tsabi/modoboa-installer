@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Installation scripts management."""
 
 import importlib
@@ -8,13 +9,13 @@ from .. import utils
 
 def install(appname, config, upgrade):
     """Install an application."""
-    if (config.has_option(appname, "enabled") and
-            not config.getboolean(appname, "enabled")):
+    if config.has_option(appname, "enabled") and not config.getboolean(
+        appname, "enabled"
+    ):
         return
     utils.printcolor("Installing {}".format(appname), utils.MAGENTA)
     try:
-        script = importlib.import_module(
-            "modoboa_installer.scripts.{}".format(appname))
+        script = importlib.import_module("modoboa_installer.scripts.{}".format(appname))
     except ImportError:
         print("Unknown application {}".format(appname))
         sys.exit(1)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Python related tools."""
 
 import os
@@ -28,7 +29,7 @@ def install_package(name, venv=None, upgrade=False, binary=True, **kwargs):
         get_pip_path(venv),
         " -U" if upgrade else "",
         " --no-binary :all:" if not binary else "",
-        name
+        name,
     )
     utils.exec_cmd(cmd, **kwargs)
 
@@ -36,7 +37,8 @@ def install_package(name, venv=None, upgrade=False, binary=True, **kwargs):
 def install_packages(names, venv=None, upgrade=False, **kwargs):
     """Install a Python package using pip."""
     cmd = "{} install {}{}".format(
-        get_pip_path(venv), " -U " if upgrade else "", " ".join(names))
+        get_pip_path(venv), " -U " if upgrade else "", " ".join(names)
+    )
     utils.exec_cmd(cmd, **kwargs)
 
 
@@ -44,8 +46,7 @@ def install_package_from_repository(name, url, vcs="git", venv=None, **kwargs):
     """Install a Python package from its repository."""
     if vcs == "git":
         package.backend.install("git")
-    cmd = "{} install -e {}+{}#egg={}".format(
-        get_pip_path(venv), vcs, url, name)
+    cmd = "{} install -e {}+{}#egg={}".format(get_pip_path(venv), vcs, url, name)
     utils.exec_cmd(cmd, **kwargs)
 
 

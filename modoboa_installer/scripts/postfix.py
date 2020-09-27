@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Postfix related tools."""
 
 try:
@@ -46,23 +47,24 @@ class Postfix(base.Installer):
                 config.write(fp)
 
         package.backend.preconfigure(
-            "postfix", "main_mailer_type", "select", "No configuration")
+            "postfix", "main_mailer_type", "select", "No configuration"
+        )
         super(Postfix, self).install_packages()
 
     def get_template_context(self):
         """Additional variables."""
         context = super(Postfix, self).get_template_context()
-        context.update({
-            "db_driver": self.db_driver,
-            "dovecot_mailboxes_owner": self.config.get(
-                "dovecot", "mailboxes_owner"),
-            "modoboa_venv_path": self.config.get(
-                "modoboa", "venv_path"),
-            "modoboa_instance_path": self.config.get(
-                "modoboa", "instance_path"),
-            "opendkim_port": self.config.get(
-                "opendkim", "port")
-        })
+        context.update(
+            {
+                "db_driver": self.db_driver,
+                "dovecot_mailboxes_owner": self.config.get(
+                    "dovecot", "mailboxes_owner"
+                ),
+                "modoboa_venv_path": self.config.get("modoboa", "venv_path"),
+                "modoboa_instance_path": self.config.get("modoboa", "instance_path"),
+                "opendkim_port": self.config.get("opendkim", "port"),
+            }
+        )
         return context
 
     def post_run(self):
@@ -71,9 +73,9 @@ class Postfix(base.Installer):
         python_path = os.path.join(venv_path, "bin", "python")
         instance_path = self.config.get("modoboa", "instance_path")
         script_path = os.path.join(instance_path, "manage.py")
-        cmd = (
-            "{} {} generate_postfix_maps --destdir {} --force-overwrite"
-            .format(python_path, script_path, self.config_dir))
+        cmd = "{} {} generate_postfix_maps --destdir {} --force-overwrite".format(
+            python_path, script_path, self.config_dir
+        )
         utils.exec_cmd(cmd)
 
         # Check chroot directory

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Database related tools."""
 
 import os
@@ -38,7 +39,7 @@ class PostgreSQL(Database):
 
     packages = {
         "deb": ["postgresql", "postgresql-server-dev-all"],
-        "rpm": ["postgresql-server", "postgresql-devel"]
+        "rpm": ["postgresql-server", "postgresql-devel"],
     }
     service = "postgresql"
 
@@ -56,8 +57,7 @@ class PostgreSQL(Database):
                     "https://download.postgresql.org/pub/repos/yum/"
                     "reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
                 )
-                self.packages["rpm"] = [
-                    "postgresql10-server", "postgresql10-devel"]
+                self.packages["rpm"] = ["postgresql10-server", "postgresql10-devel"]
                 self.service = "postgresql-10"
                 initdb_cmd = "/usr/pgsql-10/bin/postgresql-10-setup initdb"
                 cfgfile = "/var/lib/pgsql/10/data/pg_hba.conf"
@@ -88,8 +88,8 @@ class PostgreSQL(Database):
         """Create a user."""
         query = "SELECT 1 FROM pg_roles WHERE rolname='{}'".format(name)
         code, output = utils.exec_cmd(
-            """psql -tAc "{}" | grep -q 1""".format(query),
-            sudo_user=self.dbuser)
+            """psql -tAc "{}" | grep -q 1""".format(query), sudo_user=self.dbuser
+        )
         if not code:
             return
         query = "CREATE USER {} PASSWORD '{}'".format(name, password)
@@ -98,13 +98,12 @@ class PostgreSQL(Database):
     def create_database(self, name, owner):
         """Create a database."""
         code, output = utils.exec_cmd(
-            "psql -lqt | cut -d \| -f 1 | grep -w {} | wc -l"
-            .format(name), sudo_user=self.dbuser)
+            "psql -lqt | cut -d \| -f 1 | grep -w {} | wc -l".format(name),
+            sudo_user=self.dbuser,
+        )
         if code:
             return
-        utils.exec_cmd(
-            "createdb {} -O {}".format(name, owner),
-            sudo_user=self.dbuser)
+        utils.exec_cmd("createdb {} -O {}".format(name, owner), sudo_user=self.dbuser)
 
     def grant_access(self, dbname, user):
         """Grant access to dbname."""
@@ -113,8 +112,7 @@ class PostgreSQL(Database):
 
     def grant_right_on_table(self, dbname, table, user, right):
         """Grant specific right to user on table."""
-        query = "GRANT {} ON {} TO {}".format(
-            right.upper(), table, user)
+        query = "GRANT {} ON {} TO {}".format(right.upper(), table, user)
         self._exec_query(query, dbname=dbname)
 
     def _setup_pgpass(self, dbname, dbuser, dbpasswd):
@@ -127,8 +125,7 @@ class PostgreSQL(Database):
         pw = pwd.getpwnam(self.dbuser)
         target = os.path.join(pw[5], ".pgpass")
         with open(target, "w") as fp:
-            fp.write("127.0.0.1:*:{}:{}:{}\n".format(
-                dbname, dbname, dbpasswd))
+            fp.write("127.0.0.1:*:{}:{}:{}\n".format(dbname, dbname, dbpasswd))
         mode = stat.S_IRUSR | stat.S_IWUSR
         os.chmod(target, mode)
         os.chown(target, pw[2], pw[3])
@@ -137,8 +134,7 @@ class PostgreSQL(Database):
     def load_sql_file(self, dbname, dbuser, dbpassword, path):
         """Load SQL file."""
         self._setup_pgpass(dbname, dbuser, dbpassword)
-        cmd = "psql -h {} -d {} -U {} -w < {}".format(
-            self.dbhost, dbname, dbuser, path)
+        cmd = "psql -h {} -d {} -U {} -w < {}".format(self.dbhost, dbname, dbuser, path)
         utils.exec_cmd(cmd, sudo_user=self.dbuser)
 
 
@@ -168,21 +164,21 @@ class MySQL(Database):
         super(MySQL, self).install_package()
         if name == "debian" and version.startswith("8"):
             package.backend.preconfigure(
-                "mariadb-server", "root_password", "password",
-                self.dbpassword)
+                "mariadb-server", "root_password", "password", self.dbpassword
+            )
             package.backend.preconfigure(
-                "mariadb-server", "root_password_again", "password",
-                self.dbpassword)
+                "mariadb-server", "root_password_again", "password", self.dbpassword
+            )
         else:
             queries = [
                 "UPDATE user SET plugin='' WHERE user='root'",
-                "UPDATE user SET password=PASSWORD('{}') WHERE USER='root'"
-                .format(self.dbpassword),
-                "flush privileges"
+                "UPDATE user SET password=PASSWORD('{}') WHERE USER='root'".format(
+                    self.dbpassword
+                ),
+                "flush privileges",
             ]
             for query in queries:
-                utils.exec_cmd(
-                    "mysql -D mysql -e '{}'".format(self._escape(query)))
+                utils.exec_cmd("mysql -D mysql -e '{}'".format(self._escape(query)))
 
     def _exec_query(self, query, dbname=None, dbuser=None, dbpassword=None):
         """Exec a mysql query."""
@@ -199,11 +195,11 @@ class MySQL(Database):
     def create_user(self, name, password):
         """Create a user."""
         self._exec_query(
-            "CREATE USER '{}'@'%' IDENTIFIED BY '{}'".format(
-                name, password))
+            "CREATE USER '{}'@'%' IDENTIFIED BY '{}'".format(name, password)
+        )
         self._exec_query(
-            "CREATE USER '{}'@'localhost' IDENTIFIED BY '{}'".format(
-                name, password))
+            "CREATE USER '{}'@'localhost' IDENTIFIED BY '{}'".format(name, password)
+        )
 
     def create_database(self, name, owner):
         """Create a database."""
@@ -211,31 +207,35 @@ class MySQL(Database):
             "CREATE DATABASE IF NOT EXISTS {} "
             "DEFAULT CHARACTER SET {} "
             "DEFAULT COLLATE {}".format(
-                name, self.config.get("mysql", "charset"),
-                self.config.get("mysql", "collation"))
+                name,
+                self.config.get("mysql", "charset"),
+                self.config.get("mysql", "collation"),
+            )
         )
         self.grant_access(name, owner)
 
     def grant_access(self, dbname, user):
         """Grant access to dbname."""
         self._exec_query(
-            "GRANT ALL PRIVILEGES ON {}.* to '{}'@'%'"
-            .format(dbname, user))
+            "GRANT ALL PRIVILEGES ON {}.* to '{}'@'%'".format(dbname, user)
+        )
         self._exec_query(
-            "GRANT ALL PRIVILEGES ON {}.* to '{}'@'localhost'"
-            .format(dbname, user))
+            "GRANT ALL PRIVILEGES ON {}.* to '{}'@'localhost'".format(dbname, user)
+        )
 
     def grant_right_on_table(self, dbname, table, user, right):
         """Grant specific right to user on table."""
         query = "GRANT {} ON {}.{} TO '{}'@'%'".format(
-            right.upper(), dbname, table, user)
+            right.upper(), dbname, table, user
+        )
         self._exec_query(query)
 
     def load_sql_file(self, dbname, dbuser, dbpassword, path):
         """Load SQL file."""
         utils.exec_cmd(
             "mysql -h {} -u {} -p{} {} < {}".format(
-                self.dbhost, dbuser, dbpassword, dbname, path)
+                self.dbhost, dbuser, dbpassword, dbname, path
+            )
         )
 
 

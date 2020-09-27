@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Base classes."""
 
 import os
@@ -28,8 +29,7 @@ class Installer(object):
             self.app_config = dict(self.config.items(self.appname))
         self.dbengine = self.config.get("database", "engine")
         # Used to install system packages
-        self.db_driver = (
-            "pgsql" if self.dbengine == "postgres" else self.dbengine)
+        self.db_driver = "pgsql" if self.dbengine == "postgres" else self.dbengine
         self.dbhost = self.config.get("database", "host")
         self._config_dir = None
         if not self.with_db:
@@ -42,7 +42,8 @@ class Installer(object):
     def config_dir(self):
         """Return main configuration directory."""
         if self._config_dir is None and self.config.has_option(
-                self.appname, "config_dir"):
+            self.appname, "config_dir"
+        ):
             self._config_dir = self.config.get(self.appname, "config_dir")
         return self._config_dir
 
@@ -53,8 +54,7 @@ class Installer(object):
     def get_file_path(self, fname):
         """Return the absolute path of this file."""
         return os.path.abspath(
-            os.path.join(
-                os.path.dirname(__file__), "files", self.appname, fname)
+            os.path.join(os.path.dirname(__file__), "files", self.appname, fname)
         )
 
     def setup_database(self):
@@ -66,8 +66,7 @@ class Installer(object):
         self.backend.create_database(self.dbname, self.dbuser)
         schema = self.get_sql_schema_path()
         if schema:
-            self.backend.load_sql_file(
-                self.dbname, self.dbuser, self.dbpasswd, schema)
+            self.backend.load_sql_file(self.dbname, self.dbuser, self.dbpasswd, schema)
 
     def setup_user(self):
         """Setup a system user."""
@@ -83,8 +82,7 @@ class Installer(object):
     def get_template_context(self):
         """Return context used for template rendering."""
         context = {
-            "dbengine": (
-                "Pg" if self.dbengine == "postgres" else self.dbengine),
+            "dbengine": ("Pg" if self.dbengine == "postgres" else self.dbengine),
             "dbhost": self.dbhost,
         }
         for option, value in self.config.items("general"):

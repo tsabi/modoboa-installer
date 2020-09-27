@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """uWSGI related tools."""
 
 import os
@@ -33,14 +34,15 @@ class Uwsgi(base.Installer):
             uwsgi_plugin = "python3"
         else:
             uwsgi_plugin = "python36"
-        context.update({
-            "app_user": self.config.get(app, "user"),
-            "app_venv_path": self.config.get(app, "venv_path"),
-            "app_instance_path": (
-                self.config.get(app, "instance_path")),
-            "uwsgi_socket_path": self.get_socket_path(app),
-            "uwsgi_plugin": uwsgi_plugin,
-        })
+        context.update(
+            {
+                "app_user": self.config.get(app, "user"),
+                "app_venv_path": self.config.get(app, "venv_path"),
+                "app_instance_path": (self.config.get(app, "instance_path")),
+                "uwsgi_socket_path": self.get_socket_path(app),
+                "uwsgi_plugin": uwsgi_plugin,
+            }
+        )
         return context
 
     def get_config_dir(self):
@@ -51,8 +53,7 @@ class Uwsgi(base.Installer):
 
     def _enable_config_debian(self, dst):
         """Enable config file."""
-        link = os.path.join(
-            self.config_dir, "apps-enabled", os.path.basename(dst))
+        link = os.path.join(self.config_dir, "apps-enabled", os.path.basename(dst))
         if os.path.exists(link):
             return
         os.symlink(dst, link)
@@ -61,8 +62,7 @@ class Uwsgi(base.Installer):
         """Common setup code."""
         context = self.get_template_context(app)
         src = self.get_file_path("{}.ini.tpl".format(app))
-        dst = os.path.join(
-            self.get_config_dir(), "{}_instance.ini".format(app))
+        dst = os.path.join(self.get_config_dir(), "{}_instance.ini".format(app))
         utils.copy_from_template(src, dst, context)
         return dst
 
@@ -72,16 +72,19 @@ class Uwsgi(base.Installer):
         if package.backend.FORMAT == "deb":
             self._enable_config_debian(dst)
         else:
-            system.add_user_to_group(
-                "uwsgi", self.config.get("modoboa", "user"))
-            utils.exec_cmd("chmod -R g+w {}/media".format(
-                self.config.get("modoboa", "instance_path")))
-            utils.exec_cmd("chmod -R g+w {}/pdfcredentials".format(
-                self.config.get("modoboa", "home_dir")))
-            pattern = (
-                "s/emperor-tyrant = true/emperor-tyrant = false/")
+            system.add_user_to_group("uwsgi", self.config.get("modoboa", "user"))
             utils.exec_cmd(
-                "perl -pi -e '{}' /etc/uwsgi.ini".format(pattern))
+                "chmod -R g+w {}/media".format(
+                    self.config.get("modoboa", "instance_path")
+                )
+            )
+            utils.exec_cmd(
+                "chmod -R g+w {}/pdfcredentials".format(
+                    self.config.get("modoboa", "home_dir")
+                )
+            )
+            pattern = "s/emperor-tyrant = true/emperor-tyrant = false/"
+            utils.exec_cmd("perl -pi -e '{}' /etc/uwsgi.ini".format(pattern))
 
     def _setup_automx_config(self):
         """Custom automx configuration."""
@@ -89,12 +92,9 @@ class Uwsgi(base.Installer):
         if package.backend.FORMAT == "deb":
             self._enable_config_debian(dst)
         else:
-            system.add_user_to_group(
-                "uwsgi", self.config.get("automx", "user"))
-            pattern = (
-                "s/emperor-tyrant = true/emperor-tyrant = false/")
-            utils.exec_cmd(
-                "perl -pi -e '{}' /etc/uwsgi.ini".format(pattern))
+            system.add_user_to_group("uwsgi", self.config.get("automx", "user"))
+            pattern = "s/emperor-tyrant = true/emperor-tyrant = false/"
+            utils.exec_cmd("perl -pi -e '{}' /etc/uwsgi.ini".format(pattern))
 
     def post_run(self):
         """Additionnal tasks."""
@@ -109,9 +109,13 @@ class Uwsgi(base.Installer):
             pw = pwd.getpwnam("uwsgi")
             utils.mkdir(
                 "/run/uwsgi",
-                stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP |
-                stat.S_IROTH | stat.S_IXOTH,
-                pw[2], pw[3]
+                stat.S_IRWXU
+                | stat.S_IRGRP
+                | stat.S_IXGRP
+                | stat.S_IROTH
+                | stat.S_IXOTH,
+                pw[2],
+                pw[3],
             )
         code, output = utils.exec_cmd("service uwsgi status")
         action = "start" if code else "restart"
