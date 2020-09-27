@@ -2,6 +2,12 @@ server {
     listen 80;
     listen [::]:80;
     server_name %hostname;
+
+    location '/.well-known/acme-challenge' {
+        default_type "text/plain";
+        root        /etc/letsencrypt/webroot;
+    }
+
     rewrite ^ https://$server_name$request_uri? permanent;
 }
 
