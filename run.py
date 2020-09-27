@@ -23,15 +23,23 @@ def installation_disclaimer(args, config):
     """Display installation disclaimer."""
     hostname_smtp = config.get("general", "hostname_smtp")
     hostname_imap = config.get("general", "hostname_imap")
+
+    # Automx banner text
+    banner_automx = ""
+    if config.getboolean("automx", "enabled"):
+        banner_automx = "  autoconfig\tIN A\t\t<IP ADDRESS OF YOUR SERVER>\n"
+
     if hostname_smtp == hostname_imap:
         utils.printcolor(
             "Warning:\n"
             "Before you start the installation, please make sure the following "
             "DNS records exist for domain '{}':\n"
-            "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
-            "       IN MX  {}.\n".format(
+            "  {}\tIN A\t\t<IP ADDRESS OF YOUR SERVER>\n"
+            "{}"
+            "  @\tIN MX\t\t10 {}.\n".format(
                 args.domain,
                 hostname_smtp.replace(".{}".format(args.domain), ""),
+                banner_automx,
                 hostname_smtp,
             ),
             utils.CYAN,
@@ -41,12 +49,14 @@ def installation_disclaimer(args, config):
             "Warning:\n"
             "Before you start the installation, please make sure the following "
             "DNS records exist for domain '{}':\n"
-            "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
-            "  {} IN A   <IP ADDRESS OF YOUR SERVER>\n"
-            "       IN MX  {}.\n".format(
+            "  {}\tIN A\t\t<IP ADDRESS OF YOUR SERVER>\n"
+            "  {}\tIN A\t\t<IP ADDRESS OF YOUR SERVER>\n"
+            "{}"
+            "  @\tIN MX\t\t10 {}.\n".format(
                 args.domain,
                 hostname_smtp.replace(".{}".format(args.domain), ""),
                 hostname_imap.replace(".{}".format(args.domain), ""),
+                banner_automx,
                 hostname_smtp,
             ),
             utils.CYAN,
